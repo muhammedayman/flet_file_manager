@@ -77,9 +77,26 @@ class LeftContianer(ft.Container):
         self.content = ft.ExpansionTile(
 
             title=ft.Text(e.path),
-            controls=expansion_tiles
+            controls=[],
+            on_change=lambda e: self.open_folder_event(e, path)
         )
-        self.list_folders_recursively(e.path)
+        # self.list_folders_recursively(e.path)
+        self.page.update()
+    def open_folder_event(self,event,path):
+        items = os.listdir(path)
+        tiles = []
+        for item in items:
+            item_path = os.path.join(path, item)
+            if os.path.isdir(item_path):
+                tiles.append(
+                    ft.ExpansionTile(
+                        title=ft.Text(item),
+                        on_change=lambda e: self.open_folder_event(e, path)
+                    )
+                )
+            else:
+                tiles.append(ft.Text(item))
+        event.control.controls=tiles
         self.page.update()
     def create_expansion_tile(self,path):
         items = os.listdir(path)
